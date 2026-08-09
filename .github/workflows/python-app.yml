@@ -21,7 +21,7 @@ jobs:
     
     - name: Compile Windows executable via Wine Docker Image
       run: |
-        docker run --rm \
+        docker run --network host --rm \
           -v ${{ github.workspace }}:/workspace \
           -w /workspace \
           tobix/pywine:3.14 \
