@@ -19,8 +19,12 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v7
 
-    - name: Install GitHub CLI
-      uses: actions4gh/setup-gh@v1
+    - name: Install GitHub CLI (manually)
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+        sudo apt-add-repository https://cli.github.com/packages
+        sudo apt update
+        sudo apt install gh -y
 
     - name: Install dependencies
       run: |
