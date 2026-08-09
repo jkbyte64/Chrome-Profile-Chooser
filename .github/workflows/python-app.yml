@@ -16,7 +16,12 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v7
+    - name: Check out repository
+      uses: actions/checkout@v7
+
+    - name: Install GitHub CLI
+      uses: actions4gh/setup-gh@v1
+
     - name: Install dependencies
       run: |
         sudo apt install zip binutils python3-full python3-venv python-is-python3 -y
@@ -24,16 +29,20 @@ jobs:
         source ./env/bin/activate
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+
     - name: Compile application
       run: |
         source ./env/bin/activate
         pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py
+
     - name: Generate Timestamp
       run: |
         echo "RELEASE_TAG=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+
     - name: Prepare release ZIP
       run: |
         zip -r ./selector-${{ env.RELEASE_TAG }}.zip ./dist/selector
+
     - name: Create GitHub Release
       run: |
         gh release create ${{ env.RELEASE_TAG }} \
@@ -41,6 +50,7 @@ jobs:
           --notes "Automated build compiled on ${{ env.RELEASE_TAG }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Upload Asset to Release
       run: |
         gh release upload ${{ env.RELEASE_TAG }} ./selector-${{ env.RELEASE_TAG }}.zip
