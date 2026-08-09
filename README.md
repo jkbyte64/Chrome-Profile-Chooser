@@ -10,6 +10,8 @@ I have a PC with many profiles on Google Chrome, either linked with Google Accou
 - `requests` library, for Google Account image download.
 - `pydantic` library, for serialization of profile objects.
 - `Pillow` library, for profile image manupulation and presentation.
+- `pyinstaller`, to create the standalone executable.
+- `tzdata` library, as an indirect dependency of `pydantic`.
 
 ## How to use
 For the time being, this utility works only on Windows (tested in Windows 11). There are plans to make it compatible for Linux systems, as well as create standalone executables, to avoid the commands below.

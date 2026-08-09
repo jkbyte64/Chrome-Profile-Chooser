@@ -6,6 +6,7 @@ from tkinter import ttk
 from gui_utils import ToolTip
 from gc_profile import Profile
 from PIL import Image, ImageTk
+from util import resource_path
 from typing import Optional, Dict, Any
 
 
@@ -106,6 +107,10 @@ class Root:
     def __configure(self, width, height):
         self.__win = tk.Tk(baseName=self.__win_title)
         root = self.__win
+        
+        # Program icon
+        app_icon = tk.PhotoImage(file=resource_path("icon.png"))
+        root.iconphoto(True, app_icon)
 
         root.title(self.__win_title)
         root.geometry(self.__get_window_dimensions_for_center(width, height))
