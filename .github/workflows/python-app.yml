@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -21,14 +21,28 @@ jobs:
       run: |
         sudo apt install zip binutils python3-full python3-venv python-is-python3 -y
         python -m venv env
-        source $GITHUB_WORKSPACE/env/bin/activate
+        source ./env/bin/activate
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
     - name: Compile application
       run: |
-        cd $GITHUB_WORKSPACE
-        source $GITHUB_WORKSPACE/env/bin/activate
+        source ./env/bin/activate
         pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py
+    - name: Generate Timestamp
+        run: |
+          echo "RELEASE_TAG=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
     - name: Prepare release ZIP
       run: |
-        zip -r $GITHUB_WORKSPACE/selector.zip $GITHUB_WORKSPACE/dist/selector/*.*
+        zip -r ./selector-${{ env.RELEASE_TAG }}.zip ./dist/selector
+    - name: Create GitHub Release
+      run: |
+        gh release create ${{ env.RELEASE_TAG }} \
+          --title "Build ${{ env.RELEASE_TAG }}" \
+          --notes "Automated build compiled on ${{ env.RELEASE_TAG }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Asset to Release
+      run: |
+        gh release upload ${{ env.RELEASE_TAG }} ./selector-${{ env.RELEASE_TAG }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
