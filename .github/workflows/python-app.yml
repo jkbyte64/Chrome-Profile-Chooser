@@ -29,8 +29,8 @@ jobs:
         source ./env/bin/activate
         pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py
     - name: Generate Timestamp
-        run: |
-          echo "RELEASE_TAG=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+      run: |
+        echo "RELEASE_TAG=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
     - name: Prepare release ZIP
       run: |
         zip -r ./selector-${{ env.RELEASE_TAG }}.zip ./dist/selector
