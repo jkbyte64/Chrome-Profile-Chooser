@@ -28,7 +28,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         source $GITHUB_WORKSPACE/env/bin/activate
-        pyinstaller --onedir --noconsole --add-data "icon.png;." --icon=icon.ico selector.py
+        pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py
     - name: Prepare release ZIP
       run: |
         zip -r $GITHUB_WORKSPACE/selector.zip $GITHUB_WORKSPACE/dist/selector/*.*
