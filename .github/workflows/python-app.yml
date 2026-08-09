@@ -18,19 +18,27 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v7
-
-    - name: Install dependencies
+    
+    - name: Compile Windows executable via Wine Docker Image
       run: |
-        sudo apt install zip binutils python3-full python3-venv python-is-python3 -y
-        python -m venv env
-        source ./env/bin/activate
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+        docker run --rm \
+          -v ${{ github.workspace }}:/workspace \
+          -w /workspace \
+          tobix/pywine:3.14 \
+          sh -c "pip install pyinstaller && pip install -r requirements.txt && pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py"
 
-    - name: Compile application
-      run: |
-        source ./env/bin/activate
-        pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py
+#   - name: Install dependencies
+#     run: |
+#       sudo apt install zip binutils python3-full python3-venv python-is-python3 -y
+#       python -m venv env
+#       source ./env/bin/activate
+#       python -m pip install --upgrade pip
+#       if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+#
+#   - name: Compile application
+#     run: |
+#       source ./env/bin/activate
+#       pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py
 
     - name: Generate Timestamp
       run: |
