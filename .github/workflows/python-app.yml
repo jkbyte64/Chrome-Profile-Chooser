@@ -25,7 +25,9 @@ jobs:
           -v ${{ github.workspace }}:/workspace \
           -w /workspace \
           tobix/pywine:3.14 \
-          sh -c "pip install pyinstaller && pip install -r requirements.txt && pyinstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py"
+          sh -c "wine python -m pip install pyinstaller && \
+          wine python -m pip install -r requirements.txt && \
+          wine python -m PyInstaller --onedir --noconsole --add-data "icon.png:." --icon=icon.ico selector.py"
 
 #   - name: Install dependencies
 #     run: |
@@ -46,7 +48,8 @@ jobs:
 
     - name: Prepare release ZIP
       run: |
-        zip -r ./selector-${{ env.RELEASE_TAG }}.zip ./dist/selector
+        cd ./dist/selector
+        zip -r ../../selector-${{ env.RELEASE_TAG }}.zip .
 
     - name: Create GitHub Release
       run: |
@@ -58,6 +61,7 @@ jobs:
 
     - name: Upload Asset to Release
       run: |
+        cd ${{ github.workspace }}
         gh release upload ${{ env.RELEASE_TAG }} ./selector-${{ env.RELEASE_TAG }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
